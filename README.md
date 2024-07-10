@@ -15,3 +15,11 @@
 References:
 
 https://github.com/utiasSTARS/pykitti
+
+https://datahacker.rs/calculating-sparse-optical-flow-using-lucas-kanade-method/
+
+https://www.cs.cmu.edu/~16385/s19/lectures/lecture21.pdf
+
+https://github.com/lmiz100/Optical-flow-Horn-Schunck-method/tree/master
+
+https://the-algorithms.com/algorithm/horn-schunck?lang=python
