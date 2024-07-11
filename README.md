@@ -2,6 +2,9 @@
 
 **Visual Odometry**
 
+`optical_flow.py` : Dense optical flow
+- GPU using Tinygrad
+
 `visual_odom_cv.py` : Visual odometry using OpenCV
 - Use FastFeatureDetector to detect keypoints.
 - Use calcOpticalFlowPyrLK to track keypoints between frames.
@@ -10,7 +13,7 @@
 - Use triangulation function to triangulate 3D points from two images
 - Find the scale factor using the triangulated points
 
-![](map.png)
+![](output/map.png)
 
 References:
 
