@@ -5,6 +5,12 @@
 `optical_flow.py` : Dense optical flow
 - GPU using Tinygrad
 
+
+
+https://github.com/RustyBamboo/slam/assets/20325227/7185269d-9365-46f6-a4e3-2d60ab8be57e
+
+
+
 `visual_odom_cv.py` : Visual odometry using OpenCV
 - Use FastFeatureDetector to detect keypoints.
 - Use calcOpticalFlowPyrLK to track keypoints between frames.
