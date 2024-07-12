@@ -32,3 +32,7 @@ https://www.cs.cmu.edu/~16385/s19/lectures/lecture21.pdf
 https://github.com/lmiz100/Optical-flow-Horn-Schunck-method/tree/master
 
 https://the-algorithms.com/algorithm/horn-schunck?lang=python
+
+
+3d optical flow
+https://gengshan-y.github.io/expansion/

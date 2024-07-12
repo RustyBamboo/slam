@@ -1,3 +1,4 @@
+from cv2 import THRESH_OTSU
 from tinygrad import Tensor, dtypes
 
 
@@ -25,16 +26,17 @@ def sobel_filter(image):
     return Ix.squeeze(0).squeeze(0), Iy.squeeze(0).squeeze(0)
 
 
-def horn_schunck(image1, image2, num_iter=10, alpha=0.4):
+def horn_schunck(image1, image2, num_iter=10, alpha=0.4, delta=0.1):
     """
-    Horn Schunck method for computing dense optical flo
+    Horn Schunck method for computing dense optical flow
+    num_iter: max number of iterations
+    alpha: regularization constant - the larger it is the smoother
+       the solutions we obtain (more locally consistent vectors of motion flow)
+    delta: threshold when to stop earlier
     """
     horizontal_flow = Tensor.zeros_like(image1)
     vertical_flow = Tensor.zeros_like(image2)
 
-    # kernel_x = Tensor([[-1, 1], [-1, 1]]) * 0.25
-    # kernel_y = Tensor([[-1, -1], [1, 1]]) * 0.25
-    # kernel_t = Tensor([[1, 1], [1, 1]]) * 0.25
     kernel_laplacian = Tensor(
         [[1 / 12, 1 / 6, 1 / 12], [1 / 6, 0, 1 / 6], [1 / 12, 1 / 6, 1 / 12]]
     )
@@ -45,10 +47,8 @@ def horn_schunck(image1, image2, num_iter=10, alpha=0.4):
     fx = fx1 + fx2
     fy = fy1 + fy2
     ft = image2 - image1
-    # ft = -fx1 + fx2 - fy1 + fy2
-    # fx = convolve(image1, kernel_x) + convolve(image2, kernel_x)
-    # fy = convolve(image1, kernel_y) + convolve(image2, kernel_y)
-    # ft = convolve(image1, -kernel_t) + convolve(image2, kernel_t)
+
+    total_iterations = 0
 
     for _ in range(num_iter):
         horizontal_flow_avg = convolve(horizontal_flow, kernel_laplacian)
@@ -57,7 +57,18 @@ def horn_schunck(image1, image2, num_iter=10, alpha=0.4):
         p = fx * horizontal_flow_avg + fy * vertical_flow_avg + ft
         d = 4 * alpha**2 + fx**2 + fy**2
 
+        prev_horz_flow = horizontal_flow
+        prev_verc_flow = vertical_flow
+
         horizontal_flow = horizontal_flow_avg - fx * (p / d)
         vertical_flow = vertical_flow_avg - fy * (p / d)
+
+        diff = ((horizontal_flow - prev_horz_flow) ** 2).sum().sqrt() + (
+            (vertical_flow - vertical_flow) ** 2
+        ).sum().sqrt()
+        total_iterations += 1
+        if diff.numpy() < delta:
+            print(diff.numpy(), total_iterations)
+            break
 
     return horizontal_flow, -vertical_flow

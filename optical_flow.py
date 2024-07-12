@@ -54,10 +54,12 @@ def draw_quiver(u, v, beforeImg, scale=3):
                     (int(j + dx), int(i + dy)),
                     color=(int(b), int(g), int(r)),
                     thickness=1,
+                    tipLength=0.1,
                 )
 
 
 if __name__ == "__main__":
+    save_video = False
     image_size = (500, 500)
     try:
         fn = sys.argv[1]
@@ -75,7 +77,9 @@ if __name__ == "__main__":
         frame = cv2.resize(frame, image_size)
         frame = Tensor(frame)
 
-        u, v = horn_schunck(to_grayscale(previous_frame), to_grayscale(frame))
+        u, v = horn_schunck(
+            to_grayscale(previous_frame), to_grayscale(frame), alpha=2, num_iter=20, delta=0.1
+        )
 
         u = u.numpy()
         v = v.numpy()
@@ -97,8 +101,9 @@ if __name__ == "__main__":
         cv2.imshow("dense optical flow", rgb)
         cv2.imshow("vector", img)
 
-        vis = np.concat((rgb, img), axis=1)
-        frames.append(cv2.cvtColor(vis, cv2.COLOR_BGR2RGB))
+        if save_video:
+            vis = np.concat((rgb, img), axis=1)
+            frames.append(cv2.cvtColor(vis, cv2.COLOR_BGR2RGB))
 
         # Check for the 'q' key to exit the loop
         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -108,5 +113,6 @@ if __name__ == "__main__":
     cap.release()
     cv2.destroyAllWindows()
 
-    print("Saving gif...")
-    imageio.mimsave("output/output.gif", frames, fps=30)
+    if save_video:
+        print("Saving gif...")
+        imageio.mimsave("output/output.gif", frames, fps=30)
