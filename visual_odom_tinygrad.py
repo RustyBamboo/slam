@@ -13,8 +13,6 @@ root_dir = "/mnt/storage/dataset/sequences/00"
 pose_path = "/mnt/storage/dataset/poses/00.txt"
 
 
-
-
 class KITTIDataset:
     def __init__(self, root_dir, mode, transform=None):
         left_dir = os.path.join(root_dir, "image_2")
@@ -55,6 +53,7 @@ def to_grayscale(image):
     gray = Tensor([0.299, 0.587, 0.114])
     return Tensor.einsum("abc,c->ab", image, gray) / 255
 
+
 def sobel_filter(image):
     """
     Apply Sobel filter to the input image. This provides a good approximation of the gradient.
@@ -66,11 +65,13 @@ def sobel_filter(image):
     Iy = image.conv2d(Ky, padding=1)
     return Ix.squeeze(0).squeeze(0), Iy.squeeze(0).squeeze(0)
 
+
 def gaussian_filter(image):
     image = image.unsqueeze(0).unsqueeze(0)
-    gaus = Tensor([[1, 2, 1], [2, 4, 2], [1, 2, 1]]).unsqueeze(0).unsqueeze(0) / 16 
+    gaus = Tensor([[1, 2, 1], [2, 4, 2], [1, 2, 1]]).unsqueeze(0).unsqueeze(0) / 16
     gaus = image.conv2d(gaus, padding=1)
     return gaus.squeeze(0).squeeze(0)
+
 
 def detect_corners(image, k=0.04, threshold=0.01):
 
@@ -80,10 +81,9 @@ def detect_corners(image, k=0.04, threshold=0.01):
     Iyy = gaussian_filter(Iy * Iy)
     Ixy = gaussian_filter(Ix * Iy)
 
-
-    det = (Ixx * Iyy) - (Ixy ** 2)
+    det = (Ixx * Iyy) - (Ixy**2)
     trace = Ixx + Iyy
-    R = det - k * (trace ** 2)
+    R = det - k * (trace**2)
 
     threshold = threshold * R.max()
 
@@ -91,19 +91,20 @@ def detect_corners(image, k=0.04, threshold=0.01):
 
     return corners
 
+
 dataset = KITTIDataset(root_dir, mode="train")
 
 img = Tensor(np.array(dataset[0]["left_img"]))
 img = to_grayscale(img)
 
-corners = detect_corners(image=img,threshold=0.15).numpy()
-plt.imshow(corners, cmap='gray')
+corners = detect_corners(image=img, threshold=0.15).numpy()
+plt.imshow(corners, cmap="gray")
 plt.show()
 # cv2.imshow("img_gray", corners)
 
 
-# cv2.waitKey(0) 
-  
-# closing all open windows 
-# cv2.destroyAllWindows() 
+# cv2.waitKey(0)
+
+# closing all open windows
+# cv2.destroyAllWindows()
 # print(img)

@@ -2,3 +2,6 @@ data
 .venv
 .tinygrad
 **__pycache__
+**.mov
+**.mp4
+**.gif

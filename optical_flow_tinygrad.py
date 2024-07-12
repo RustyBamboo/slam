@@ -13,10 +13,8 @@ os.environ["QT_QPA_PLATFORM"] = "xcb"
 
 root_data_path = sys.argv[1]
 
-root_dir = root_data_path+"/sequences/00"
-pose_path = root_data_path+"/poses/00.txt"
-
-
+root_dir = root_data_path + "/sequences/00"
+pose_path = root_data_path + "/poses/00.txt"
 
 
 class KITTIDataset:
@@ -61,12 +59,13 @@ dataset = KITTIDataset(root_dir, mode="train")
 def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
-    return(rho, phi)
+    return (rho, phi)
+
 
 # print(cart2pol(u, v))
 
-focal_length=718.8560
-pp=(607.1928, 185.2157)
+focal_length = 718.8560
+pp = (607.1928, 185.2157)
 
 R = np.eye(3, dtype=np.float32)
 t = np.zeros(shape=(3, 1), dtype=np.float32)
@@ -76,28 +75,27 @@ traj = np.zeros(shape=(600, 800, 3))
 
 for i in range(1000):
     img1 = Tensor(np.array(dataset[i]["left_img"]))
-    img2 = Tensor(np.array(dataset[i+1]["left_img"]))
+    img2 = Tensor(np.array(dataset[i + 1]["left_img"]))
     u, v = horn_schunck(to_grayscale(img1), to_grayscale(img2))
 
     u = u.numpy()
     v = v.numpy()
 
-
-    xes = np.tile(np.arange(img1.shape[0]),(img1.shape[1],1))
-    yes = np.tile(np.arange(img1.shape[1])[:,None],(1,img1.shape[0]))
+    xes = np.tile(np.arange(img1.shape[0]), (img1.shape[1], 1))
+    yes = np.tile(np.arange(img1.shape[1])[:, None], (1, img1.shape[0]))
 
     nxes = xes + u.T
     nyes = yes + v.T
 
-    xy  = np.stack((yes,xes),axis = 2)
-    nxy = np.stack((nyes,nxes),axis = 2)
+    xy = np.stack((yes, xes), axis=2)
+    nxy = np.stack((nyes, nxes), axis=2)
 
-    old_pts = np.reshape(xy,(-1, xy.shape[-1]))
-    new_pts = np.reshape(nxy,(-1, nxy.shape[-1]))
+    old_pts = np.reshape(xy, (-1, xy.shape[-1]))
+    new_pts = np.reshape(nxy, (-1, nxy.shape[-1]))
 
-    uv_pts = np.stack((u.T,v.T),axis = 2)
-    uv_pts = np.reshape(uv_pts,(-1, uv_pts.shape[-1]))
-    mag = np.sqrt(uv_pts[:,0]**2 + uv_pts[:,1]**2) > 0.5
+    uv_pts = np.stack((u.T, v.T), axis=2)
+    uv_pts = np.reshape(uv_pts, (-1, uv_pts.shape[-1]))
+    mag = np.sqrt(uv_pts[:, 0] ** 2 + uv_pts[:, 1] ** 2) > 0.5
 
     old_pts = old_pts[mag]
     new_pts = new_pts[mag]
@@ -127,13 +125,11 @@ for i in range(1000):
     )
 
     # if (
-        # abs(t[2][0]) > abs(t[0][0])
-        # and abs(t[2][0]) > abs(t[1][0])
+    # abs(t[2][0]) > abs(t[0][0])
+    # and abs(t[2][0]) > abs(t[1][0])
     # ):
     t = t + 1 * R.dot(t_new)
     R = R_new.dot(R)
-
-
 
     diag = np.array([[-1, 0, 0], [0, -1, 0], [0, 0, -1]])
     adj_coord = np.matmul(diag, t)

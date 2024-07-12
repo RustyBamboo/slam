@@ -1,14 +1,17 @@
 from tinygrad import Tensor, dtypes
 
+
 def to_grayscale(image):
     gray = Tensor([0.299, 0.587, 0.114])
     return Tensor.einsum("abc,c->ab", image, gray) / 255
+
 
 def convolve(image, f):
     image = image.unsqueeze(0).unsqueeze(0)
     f = f.unsqueeze(0).unsqueeze(0)
     image = image.conv2d(f, stride=1, padding=1)
     return image.squeeze(0).squeeze(0)
+
 
 def sobel_filter(image):
     """
@@ -24,7 +27,7 @@ def sobel_filter(image):
 
 def horn_schunck(image1, image2, num_iter=10, alpha=0.4):
     """
-        Horn Schunck method for computing dense optical flo
+    Horn Schunck method for computing dense optical flo
     """
     horizontal_flow = Tensor.zeros_like(image1)
     vertical_flow = Tensor.zeros_like(image2)

@@ -42,19 +42,23 @@ def draw_quiver(u, v, beforeImg, scale=3):
             if magnitude > magnitudeAvg:
                 angle = np.arctan2(dy, dx)
 
-                r = 255*np.cos(angle)
-                g = 255*np.cos(angle + 2 * np.pi / 3)
-                b = 255*np.cos(angle + 4 * np.pi / 3)
+                r = 255 * np.cos(angle)
+                g = 255 * np.cos(angle + 2 * np.pi / 3)
+                b = 255 * np.cos(angle + 4 * np.pi / 3)
 
                 # print(r,g,b, angle)
 
                 cv2.arrowedLine(
-                    beforeImg, (j, i), (int(j + dx), int(i + dy)), color=(int(b), int(g), int(r)), thickness=1
+                    beforeImg,
+                    (j, i),
+                    (int(j + dx), int(i + dy)),
+                    color=(int(b), int(g), int(r)),
+                    thickness=1,
                 )
 
 
 if __name__ == "__main__":
-    image_size = (500,500)
+    image_size = (500, 500)
     try:
         fn = sys.argv[1]
     except IndexError:
@@ -105,4 +109,4 @@ if __name__ == "__main__":
     cv2.destroyAllWindows()
 
     print("Saving gif...")
-    imageio.mimsave('output/output.gif', frames, fps=30)
+    imageio.mimsave("output/output.gif", frames, fps=30)
