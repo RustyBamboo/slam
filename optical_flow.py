@@ -78,7 +78,11 @@ if __name__ == "__main__":
         frame = Tensor(frame)
 
         u, v = horn_schunck(
-            to_grayscale(previous_frame), to_grayscale(frame), alpha=2, num_iter=20, delta=0.1
+            to_grayscale(previous_frame),
+            to_grayscale(frame),
+            alpha=2,
+            num_iter=20,
+            delta=0.1,
         )
 
         u = u.numpy()

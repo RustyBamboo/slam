@@ -33,6 +33,8 @@ def horn_schunck(image1, image2, num_iter=10, alpha=0.4, delta=0.1):
     alpha: regularization constant - the larger it is the smoother
        the solutions we obtain (more locally consistent vectors of motion flow)
     delta: threshold when to stop earlier
+
+    https://en.wikipedia.org/wiki/Horn%E2%80%93Schunck_method
     """
     horizontal_flow = Tensor.zeros_like(image1)
     vertical_flow = Tensor.zeros_like(image2)
